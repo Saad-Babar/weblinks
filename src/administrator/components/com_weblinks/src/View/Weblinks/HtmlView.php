@@ -12,6 +12,7 @@ namespace Joomla\Component\Weblinks\Administrator\View\Weblinks;
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
+
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Factory;
@@ -66,11 +67,11 @@ class HtmlView extends BaseHtmlView
     public $activeFilters;
 
     /**
-    * Is this view an Empty State
-    *
-    * @var  boolean
-    * @since 4.0.0
-    */
+     * Is this view an Empty State
+     *
+     * @var  boolean
+     * @since 4.0.0
+     */
     private $isEmptyState = false;
 
     /**
@@ -92,7 +93,7 @@ class HtmlView extends BaseHtmlView
         $this->activeFilters = $model->getActiveFilters();
 
         // Check for errors.
-        if (\count($errors = $this->get('Errors'))) {
+        if (\count($errors = $model->getErrors())) {
             throw new GenericDataException(implode("\n", $errors), 500);
         }
 
@@ -106,7 +107,7 @@ class HtmlView extends BaseHtmlView
         } else {
             // In article associations modal we need to remove language filter if forcing a language.
             // We also need to change the category filter to show show categories with All or the forced language.
-            if ($forcedLanguage = Factory::getApplication()->input->get('forcedLanguage', '', 'CMD')) {
+            if ($forcedLanguage = Factory::getApplication()->getInput()->get('forcedLanguage', '', 'CMD')) {
                 // If the language is forced we can't allow to select the language, so transform the language selector filter into an hidden field.
                 $languageXml = new \SimpleXMLElement('<field name="language" type="hidden" default="' . $forcedLanguage . '" />');
                 $this->filterForm->setField($languageXml, 'filter', true);
@@ -135,7 +136,7 @@ class HtmlView extends BaseHtmlView
         $user  = $this->getCurrentUser();
 
         // Get the toolbar object instance
-        $toolbar = $this->getDocument()->getToolbar();
+        $toolbar = Toolbar::getInstance('toolbar');
 
         ToolbarHelper::title(Text::_('COM_WEBLINKS_MANAGER_WEBLINKS'), 'link weblinks');
 

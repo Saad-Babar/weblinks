@@ -162,7 +162,7 @@ class WeblinkModel extends AdminModel
 
             // Prime some default values.
             if ($this->getState('weblink.id') == 0) {
-                $data->set('catid', $app->input->get('catid', $app->getUserState('com_weblinks.weblinks.filter.category_id'), 'int'));
+                $data->set('catid', $app->getInput()->get('catid', $app->getUserState('com_weblinks.weblinks.filter.category_id'), 'int'));
             }
         }
 
@@ -184,11 +184,11 @@ class WeblinkModel extends AdminModel
     {
         if ($item = parent::getItem($pk)) {
             // Convert the metadata field to an array.
-            $registry = new Registry($item->metadata ?? '');
+            $registry       = new Registry($item->metadata ?? '');
             $item->metadata = $registry->toArray();
 
             // Convert the images field to an array.
-            $registry = new Registry($item->images ?? '');
+            $registry     = new Registry($item->images ?? '');
             $item->images = $registry->toArray();
 
             // Load associated web links items
@@ -242,7 +242,7 @@ class WeblinkModel extends AdminModel
 
             // Set ordering to the last item if not set
             if (empty($table->ordering)) {
-                $db = $this->getDatabase();
+                $db    = $this->getDatabase();
                 $query = $db->getQuery(true)
                     ->select('MAX(ordering)')
                     ->from($db->quoteName('#__weblinks'));
@@ -253,7 +253,7 @@ class WeblinkModel extends AdminModel
                 $table->ordering = $max + 1;
             } else {
                 // Set the values
-                $table->modified = $date->toSql();
+                $table->modified    = $date->toSql();
                 $table->modified_by = $user->id;
             }
         }
@@ -273,7 +273,7 @@ class WeblinkModel extends AdminModel
      */
     protected function getReorderConditions($table)
     {
-        $condition = [];
+        $condition   = [];
         $condition[] = 'catid = ' . (int) $table->catid;
 
         return $condition;
@@ -300,11 +300,11 @@ class WeblinkModel extends AdminModel
 
         // Save New Category
         if ($catid == 0 && $this->canCreateCategory()) {
-            $table = [];
-            $table['title'] = $data['catid'];
+            $table              = [];
+            $table['title']     = $data['catid'];
             $table['parent_id'] = 1;
             $table['extension'] = 'com_weblinks';
-            $table['language'] = $data['language'];
+            $table['language']  = $data['language'];
             $table['published'] = 1;
 
             // Create new category and get catid back
@@ -314,14 +314,9 @@ class WeblinkModel extends AdminModel
         // Alter the title for save as copy
         if ($this->getState('task') === 'save2copy') {
             [$name, $alias] = $this->generateNewTitle($data['catid'], $data['alias'], $data['title']);
-            $data['title'] = $name;
-            $data['alias'] = $alias;
-            $data['state'] = 0;
-        }
-
-        // Ensure follow is properly set (default: 'follow')
-        if (!isset($data['follow'])) {
-            $data['follow'] = 'follow';
+            $data['title']  = $name;
+            $data['alias']  = $alias;
+            $data['state']  = 0;
         }
 
         return parent::save($data);
@@ -377,7 +372,7 @@ class WeblinkModel extends AdminModel
 
             if (\count($languages) > 1) {
                 $addform = new \SimpleXMLElement('<form />');
-                $fields = $addform->addChild('fields');
+                $fields  = $addform->addChild('fields');
                 $fields->addAttribute('name', 'associations');
                 $fieldset = $fields->addChild('fieldset');
                 $fieldset->addAttribute('name', 'item_associations');
